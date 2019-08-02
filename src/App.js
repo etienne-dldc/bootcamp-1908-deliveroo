@@ -47,7 +47,11 @@ class App extends React.Component {
           <div className="Content--center">
             <div className="Menu">
               {Object.keys(this.state.menu).map((name, index) => {
-                return <MenuItems name={name} items={this.state.menu[name]} />;
+                const items = this.state.menu[name];
+                if (items.length === 0) {
+                  return null;
+                }
+                return <MenuItems name={name} items={items} />;
               })}
             </div>
             <div className="Cart">
