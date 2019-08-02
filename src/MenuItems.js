@@ -7,7 +7,7 @@ const MenuItems = props => {
       <div className="MenuItems--items">
         {props.items.map(menuItem => {
           return (
-            <div className="MenuItem">
+            <div key={menuItem.id} className="MenuItem">
               <div className="MenuItem--card">
                 <div className="MenuItem--texts">
                   <h3>{menuItem.title}</h3>
@@ -32,7 +32,7 @@ const MenuItems = props => {
                 </div>
                 {menuItem.picture && (
                   <div className="MenuItem--picture">
-                    <img src={menuItem.picture} alt />
+                    <img src={menuItem.picture} alt={'Photo de ' + menuItem.title} />
                   </div>
                 )}
               </div>

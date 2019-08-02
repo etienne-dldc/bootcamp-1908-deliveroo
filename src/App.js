@@ -51,7 +51,7 @@ class App extends React.Component {
                 if (items.length === 0) {
                   return null;
                 }
-                return <MenuItems name={name} items={items} />;
+                return <MenuItems key={name} name={name} items={items} />;
               })}
             </div>
             <div className="Cart">
