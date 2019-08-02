@@ -4,15 +4,20 @@ import axios from 'axios';
 class App extends React.Component {
   state = {
     menu: {},
+    restaurant: {},
     isLoading: true,
   };
 
-  componentDidMount = async () => {
-    const response = await axios.get('https://deliveroo-api.now.sh/menu');
-    this.setState({ menu: response.data.menu, isLoading: false });
+  componentDidMount = () => {
+    window.setTimeout(async () => {
+      const response = await axios.get('https://deliveroo-api.now.sh/menu');
+      this.setState({ menu: response.data.menu, restaurant: response.data.restaurant, isLoading: false });
+    }, 3000);
   };
 
   render = () => {
+    const { restaurant } = this.state;
+
     return (
       <div>
         <header className="Header">
@@ -30,17 +35,10 @@ class App extends React.Component {
           <div className="RestaurantInfos">
             <div className="RestaurantInfos--center">
               <div className="RestaurantInfos--texts">
-                <h1>Le Pain Quotidien - Montorgueil</h1>
-                <p>
-                  Profitez de chaque plaisir de la vie quotidienne. Le Pain Quotidien propose des ingrédients simples et
-                  sains, du bon pain, des fruits et des légumes frais et de saison issus de l’agriculture biologique.
-                </p>
+                <h1>{restaurant.name}</h1>
+                <p>{restaurant.description}</p>
               </div>
-              <img
-                className="RestaurantInfos--cover"
-                src="https://f.roocdn.com/images/menus/17697/header-image.jpg"
-                alt="restaurant cover"
-              />
+              <img className="RestaurantInfos--cover" src={restaurant.picture} alt="restaurant cover" />
             </div>
           </div>
         </header>
@@ -58,7 +56,7 @@ class App extends React.Component {
                             <div className="MenuItem--card">
                               <div className="MenuItem--texts">
                                 <h3>{menuItem.title}</h3>
-                                <p>{menuItem.description}</p>
+                                {menuItem.description && <p>{menuItem.description}</p>}
                                 <div className="MenuItem--infos">
                                   <span className="MenuItem--price">{menuItem.price} €</span>
                                   {menuItem.popular && (
