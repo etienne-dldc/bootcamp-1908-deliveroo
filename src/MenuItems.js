@@ -1,14 +1,21 @@
 import React from 'react';
 
 const MenuItems = props => {
+  const { name, items, onItemClick } = props;
+
   return (
     <div className="MenuItems">
-      <h2>{props.name}</h2>
+      <h2>{name}</h2>
       <div className="MenuItems--items">
-        {props.items.map(menuItem => {
+        {items.map(menuItem => {
           return (
             <div key={menuItem.id} className="MenuItem">
-              <div className="MenuItem--card">
+              <div
+                className="MenuItem--card"
+                onClick={() => {
+                  onItemClick(menuItem.id);
+                }}
+              >
                 <div className="MenuItem--texts">
                   <h3>{menuItem.title}</h3>
                   {menuItem.description && <p>{menuItem.description}</p>}

@@ -7,6 +7,9 @@ class App extends React.Component {
     menu: {},
     restaurant: {},
     isLoading: true,
+    cart: [
+      // { itemId: '1519055545-89', amount: 2 }, { itemId: '1519055545-91', amount: 1 }
+    ],
   };
 
   componentDidMount = () => {
@@ -16,8 +19,52 @@ class App extends React.Component {
     }, 3000);
   };
 
+  handleMenuItemClick = itemId => {
+    // let itemIndex = -1;
+    // for (let index = 0; index < this.state.cart.length; index++) {
+    //   const item = this.state.cart[index];
+    //   if (item.itemId === itemId) {
+    //     itemIndex = index;
+    //   }
+    // }
+
+    const itemIndex = this.state.cart.findIndex(item => {
+      return item.itemId === itemId;
+    });
+
+    const cartCopy = [...this.state.cart];
+    if (itemIndex === -1) {
+      cartCopy.push({ itemId: itemId, amount: 1 });
+    } else {
+      cartCopy[itemIndex] = { ...cartCopy[itemIndex] };
+      cartCopy[itemIndex].amount += 1;
+    }
+    this.setState({ cart: cartCopy });
+  };
+
   render = () => {
     const { restaurant } = this.state;
+
+    const allMenus = [];
+    Object.keys(this.state.menu).forEach(menuCategotyName => {
+      const menuList = this.state.menu[menuCategotyName];
+      allMenus.push(...menuList);
+    });
+
+    console.log(allMenus);
+
+    let sum = 0;
+    this.state.cart.forEach(cartItem => {
+      let menuItem = null;
+      allMenus.forEach(menu => {
+        if (menu.id === cartItem.itemId) {
+          menuItem = menu;
+        }
+      });
+      if (menuItem) {
+        sum += parseFloat(menuItem.price) * cartItem.amount;
+      }
+    });
 
     return (
       <div>
@@ -51,14 +98,104 @@ class App extends React.Component {
                 if (items.length === 0) {
                   return null;
                 }
-                return <MenuItems key={name} name={name} items={items} />;
+                return <MenuItems key={name} name={name} items={items} onItemClick={this.handleMenuItemClick} />;
               })}
             </div>
             <div className="Cart">
-              <div className="Cart--card">
-                <button className="Cart--validate Cart--disabled">Valider mon panier</button>
-                <div className="Cart--empty">Votre panier est vide</div>
-              </div>
+              {this.state.cart.length === 0 ? (
+                <div className="Cart--card">
+                  <button className="Cart--validate Cart--disabled">Valider mon panier</button>
+                  <div className="Cart--empty">Votre panier est vide</div>
+                </div>
+              ) : (
+                <div className="Cart--card">
+                  <button className="Cart--validate">Valider mon panier</button>
+                  <div>
+                    <div className="Cart--items">
+                      {this.state.cart.map(cartItem => {
+                        // console.log(cartItem.itemId);
+                        // console.log(this.state.menu);
+
+                        let menuItem = null;
+                        allMenus.forEach(menu => {
+                          if (menu.id === cartItem.itemId) {
+                            menuItem = menu;
+                          }
+                        });
+                        if (menuItem === null) {
+                          return null;
+                        }
+                        return (
+                          <div className="Cart--line" key={cartItem.itemId}>
+                            <div className="Cart--counter">
+                              <span>
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  viewBox="0 0 24 24"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  strokeWidth={2}
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  className="feather feather-plus-circle"
+                                  style={{
+                                    width: 20,
+                                    height: 20,
+                                    cursor: 'pointer',
+                                    color: 'rgb(0, 206, 189)',
+                                  }}
+                                >
+                                  <circle cx={12} cy={12} r={10} />
+                                  <line x1={8} y1={12} x2={16} y2={12} />
+                                </svg>
+                              </span>
+                              <span>{cartItem.amount}</span>
+                              <span>
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  viewBox="0 0 24 24"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  strokeWidth={2}
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  className="feather feather-plus-circle"
+                                  style={{
+                                    width: 20,
+                                    height: 20,
+                                    cursor: 'pointer',
+                                    color: 'rgb(0, 206, 189)',
+                                  }}
+                                >
+                                  <circle cx={12} cy={12} r={10} />
+                                  <line x1={12} y1={8} x2={12} y2={16} />
+                                  <line x1={8} y1={12} x2={16} y2={12} />
+                                </svg>
+                              </span>
+                            </div>
+                            <span className="Cart--item-name">{menuItem.title}</span>
+                            <span className="Cart--amount">{menuItem.price}</span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                    <div className="Cart--results">
+                      <div className="Cart--result-line">
+                        <span className="Cart--result-name">Sous-total</span>
+                        <span className="Cart--amount">60,00 €</span>
+                      </div>
+                      <div className="Cart--result-line">
+                        <span className="Cart--result-name">Frais de livraison</span>
+                        <span>2,50 €</span>
+                      </div>
+                    </div>
+                    <div className="Cart--total">
+                      <span className="Cart--result-name">Total</span>
+                      <span className="Cart--amount">{sum} €</span>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
