@@ -45,16 +45,21 @@ class App extends React.Component {
   render = () => {
     const { restaurant } = this.state;
 
+    const allMenus = [];
+    Object.keys(this.state.menu).forEach(menuCategotyName => {
+      const menuList = this.state.menu[menuCategotyName];
+      allMenus.push(...menuList);
+    });
+
+    console.log(allMenus);
+
     let sum = 0;
     this.state.cart.forEach(cartItem => {
       let menuItem = null;
-      Object.keys(this.state.menu).forEach(menuCategotyName => {
-        const menuList = this.state.menu[menuCategotyName];
-        menuList.forEach(menu => {
-          if (menu.id === cartItem.itemId) {
-            menuItem = menu;
-          }
-        });
+      allMenus.forEach(menu => {
+        if (menu.id === cartItem.itemId) {
+          menuItem = menu;
+        }
       });
       if (menuItem) {
         sum += parseFloat(menuItem.price) * cartItem.amount;
@@ -112,13 +117,10 @@ class App extends React.Component {
                         // console.log(this.state.menu);
 
                         let menuItem = null;
-                        Object.keys(this.state.menu).forEach(menuCategotyName => {
-                          const menuList = this.state.menu[menuCategotyName];
-                          menuList.forEach(menu => {
-                            if (menu.id === cartItem.itemId) {
-                              menuItem = menu;
-                            }
-                          });
+                        allMenus.forEach(menu => {
+                          if (menu.id === cartItem.itemId) {
+                            menuItem = menu;
+                          }
                         });
                         if (menuItem === null) {
                           return null;
